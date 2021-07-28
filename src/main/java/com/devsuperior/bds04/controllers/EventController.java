@@ -31,7 +31,7 @@ public class EventController {
 	@GetMapping
 	public ResponseEntity<Page<EventDTO>> findAll(Pageable pageable) {
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("name"));
-		Page<EventDTO> list = service.findAll(pageRequest);		
+		Page<EventDTO> list = service.findAllPaged(pageRequest);		
 		return ResponseEntity.ok().body(list);
 	}
 	

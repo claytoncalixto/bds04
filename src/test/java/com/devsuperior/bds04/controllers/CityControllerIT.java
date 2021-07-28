@@ -2,7 +2,6 @@ package com.devsuperior.bds04.controllers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,10 +26,10 @@ public class CityControllerIT {
 
 	@Autowired
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private TokenUtil tokenUtil;
 
@@ -38,10 +37,10 @@ public class CityControllerIT {
 	private String clientPassword;
 	private String adminUsername;
 	private String adminPassword;
-	
+
 	@BeforeEach
 	void setUp() throws Exception {
-		
+
 		clientUsername = "ana@gmail.com";
 		clientPassword = "123456";
 		adminUsername = "bob@gmail.com";
@@ -53,16 +52,13 @@ public class CityControllerIT {
 
 		CityDTO dto = new CityDTO(null, "Recife");
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/cities")
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/cities").content(jsonBody).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isUnauthorized());
 	}
-	
+
 	@Test
 	public void insertShouldReturn403WhenClientLogged() throws Exception {
 
@@ -70,17 +66,13 @@ public class CityControllerIT {
 
 		CityDTO dto = new CityDTO(null, "Recife");
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/cities")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/cities").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isForbidden());
 	}
-	
+
 	@Test
 	public void insertShouldInsertResourceWhenAdminLoggedAndCorrectData() throws Exception {
 
@@ -88,14 +80,10 @@ public class CityControllerIT {
 
 		CityDTO dto = new CityDTO(null, "Recife");
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/cities")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/cities").header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.id").exists());
 		result.andExpect(jsonPath("$.name").value("Recife"));
@@ -108,25 +96,24 @@ public class CityControllerIT {
 
 		CityDTO dto = new CityDTO(null, "    ");
 		String jsonBody = objectMapper.writeValueAsString(dto);
-		
-		ResultActions result =
-				mockMvc.perform(post("/cities")
-					.header("Authorization", "Bearer " + accessToken)
-					.content(jsonBody)
-					.contentType(MediaType.APPLICATION_JSON)
-					.accept(MediaType.APPLICATION_JSON));
-		
+
+		ResultActions result = mockMvc.perform(post("/cities")
+				.header("Authorization", "Bearer " + accessToken)
+				.content(jsonBody).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
 		result.andExpect(status().isUnprocessableEntity());
 		result.andExpect(jsonPath("$.errors[0].fieldName").value("name"));
-		result.andExpect(jsonPath("$.errors[0].message").value("Campo requerido"));
+		result.andExpect(jsonPath("$.errors[0].message").value("Nome não pode ser vazio"));
 	}
 
 	@Test
 	public void findAllShouldReturnAllResourcesSortedByName() throws Exception {
 		
-		ResultActions result =
-				mockMvc.perform(get("/cities")
-					.contentType(MediaType.APPLICATION_JSON));
+		String accessToken = tokenUtil.obtainAccessToken(mockMvc, adminUsername, adminPassword);
+
+		ResultActions result = mockMvc.perform(get("/cities")
+				.header("Authorization", "Bearer " + accessToken)
+				.contentType(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$[0].name").value("Belo Horizonte"));

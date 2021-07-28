@@ -18,7 +18,7 @@ public class EventService {
 	private EventRepository repository;
 	
 	@Transactional(readOnly = true)
-	public Page<EventDTO> findAll(Pageable pageable) {
+	public Page<EventDTO> findAllPaged(Pageable pageable) {
 		Page<Event> page = repository.findAll(pageable);
 		return page.map(x -> new EventDTO(x));
 	}
