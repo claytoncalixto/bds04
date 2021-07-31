@@ -9,21 +9,14 @@ import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.SecurityConfig;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.devsuperior.bds04.config.ResourceServerConfig;
-import com.devsuperior.bds04.config.WebSecurityConfig;
 import com.devsuperior.bds04.dto.EventDTO;
 import com.devsuperior.bds04.tests.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -188,8 +181,8 @@ public class EventControllerIT {
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.content").exists());
-		result.andExpect(jsonPath("$.content[0].name").value("Feira do Software"));
-		result.andExpect(jsonPath("$.content[1].name").value("CCXP"));
-		result.andExpect(jsonPath("$.content[2].name").value("Congresso Linux"));
+		result.andExpect(jsonPath("$.content[0].name").value("CCXP"));
+		result.andExpect(jsonPath("$.content[1].name").value("Congresso Linux"));
+		result.andExpect(jsonPath("$.content[2].name").value("Feira do Software"));
 	}	
 }
